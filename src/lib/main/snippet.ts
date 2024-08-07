@@ -41,7 +41,7 @@ export function snippet(
           top!.dispatchEvent(new CustomEvent('pt1', { detail: win }));
         } else {
           // set a timeout to fire if PT hasn't initialized in Xms
-          timeout = setTimeout(fallback, 9999);
+          timeout = setTimeout(fallback, 3999);
           doc.addEventListener('pt0', clearFallback);
 
           if (useAtomics) {
@@ -103,7 +103,7 @@ export function snippet(
     if (debug) {
       console.warn(`Partytown script fallback`);
     }
-
+  
     clearFallback();
 
     // remove any previously patched functions
@@ -129,9 +129,12 @@ export function snippet(
     if (sandbox) {
       sandbox.parentNode!.removeChild(sandbox);
     }
+
+    // DDM custom event to track if fallback is triggered
+    doc.dispatchEvent(new CustomEvent('pt-1'));
   }
 
-  function clearFallback() {
+  function clearFallback() {  
     // Partytown has initialized, clear the fallback timeout
     clearTimeout(timeout);
   }
@@ -173,11 +176,5 @@ export function snippet(
       });
     });
   }
-
-  if (doc.readyState == 'complete') {
-    ready();
-  } else {
-    win.addEventListener('DOMContentLoaded', ready);
-    win.addEventListener('load', ready);
-  }
+  ready();
 }
